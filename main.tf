@@ -61,11 +61,11 @@ module "eks" {
       instance_type                 = "t3.large"
       additional_userdata           = ""
       additional_security_group_ids = [aws_security_group.worker_group_mgmt_two.id]
+      root_volume_type              = "gp2"
 
       #autoscaling group section
       asg_max_size         = "2"
       asg_desired_capacity = "2"
-
     },
 
   ]
