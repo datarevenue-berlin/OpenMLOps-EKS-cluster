@@ -38,7 +38,6 @@ module "eks" {
 
   tags = {
     Environment       = "development"
-    "deployment-date" = timestamp()
   }
 
   vpc_id    = module.vpc.vpc_id
