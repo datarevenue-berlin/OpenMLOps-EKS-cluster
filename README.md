@@ -1,15 +1,15 @@
 # AWS EKS cluster for MLOps Reference Architecture
 
-This is a Terraform module that sets up an AWS EKS Kubernetes cluster for you, so that it's prepared 
+This is a Terraform module that provisions and configures an AWS EKS Kubernetes cluster, so that it's prepared 
 for installing [MLOps Reference Architecture](https://github.com/datarevenue-berlin/mlops-architecture) 
-tools on it.
+tools in it.
 
-## Check a ready-to-use example
+## Other repositories
 
-This module only provisions the cluster. It doesn't install the tools.
+This configuration doesn't install the tools, it just provisions the cluster. Check out other repositories
+for the MLOps tools.
 
-A complete example of Terraform configuration which sets up the cluster and installs MLOps tools in it
-can be found [**here**](https://github.com/datarevenue-berlin/mlops-architecture-aws).
+![Repositories diagram](http://www.plantuml.com/plantuml/svg/fP9DImCn48Rl-HL3BvxIlHUH5l4WLHGgU2WzfDcn2StEB9b9FOZ_tTHI55a_fEV9Ey_3EvcAkgobIyOd9mAZsvkxNc2MVOYANaj6O8BPus84BmRWFlCkIcGISE1J4SKCZbg89EfI4ZWiKEOaunfOBeDgBvEcsKGDPJtst3MjgrJS8HMqQymfKjCbxiMwJrpBPDspG9rkORKoh-PxnuFSzO135Qkcyr8nX8fob3xDxKzIS3LVmEK1zxMzGISe4cdp7XFCk-WH-6dV_Ob5ubRi4V4XJgm8EMw2ceSG1JBsR91Qs0-C-Uadd5ixU8L_X8PRCcVAu9aqSm8D29nRp1CpU7Ax3B5jaLONl-yrzIc2ZzadD5EajdJf3G00)
 
 ## Provisioned resources
 
