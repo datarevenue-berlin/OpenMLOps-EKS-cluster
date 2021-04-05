@@ -63,8 +63,8 @@ module "eks" {
       root_volume_type              = "gp2"
 
       #autoscaling group section
-      asg_max_size         = "2"
-      asg_desired_capacity = "2"
+      asg_max_size         = "3"
+      asg_desired_capacity = "3"
     },
 
   ]
