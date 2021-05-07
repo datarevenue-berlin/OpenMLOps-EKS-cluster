@@ -44,26 +44,26 @@ module "eks" {
   map_users = var.map_users
 
   worker_groups = [
-    # {
-    #   name                          = "worker-group-medium"
-    #   instance_type                 = "t3.medium"
-    #   additional_userdata           = ""
-    #   additional_security_group_ids = [aws_security_group.worker_group_mgmt_one.id]
+    {
+      name                          = "worker-group-medium"
+      instance_type                 = "t3.medium"
+      additional_userdata           = ""
+      additional_security_group_ids = [aws_security_group.worker_group_mgmt_one.id]
+      root_volume_type              = "gp2"
 
-    #   #autoscaling group section
-    #   asg_max_size                  = "5"
-    #   asg_desired_capacity          = "1"
-    # },
-
+      #autoscaling group section
+      asg_max_size                  = "5"
+      asg_desired_capacity          = "1"
+    },
     {
       name                          = "worker-group-large"
-      instance_type                 = "t3.large"
+      instance_type                 = "t3.xlarge"
       additional_userdata           = ""
       additional_security_group_ids = [aws_security_group.worker_group_mgmt_two.id]
       root_volume_type              = "gp2"
 
       #autoscaling group section
-      asg_max_size         = "6"
+      asg_max_size         = "8"
       asg_desired_capacity = "3"
     },
 
@@ -102,4 +102,84 @@ resource "aws_iam_role_policy_attachment" "ec2_container_reg_full_access" {
 resource "aws_iam_role_policy_attachment" "s3_full_access" {
   policy_arn = "arn:aws:iam::aws:policy/AmazonS3FullAccess"
   role       = module.eks.worker_iam_role_name
+}
+
+resource "aws_iam_role_policy_attachment" "workers_autoscaling" {
+  policy_arn = aws_iam_policy.worker_autoscaling.arn
+  role       = module.eks.worker_iam_role_name
+}
+
+resource "aws_iam_policy" "worker_autoscaling" {
+  name_prefix = "eks-worker-autoscaling-${module.eks.cluster_id}"
+  description = "EKS worker node autoscaling policy for cluster ${module.eks.cluster_id}"
+  policy      = data.aws_iam_policy_document.worker_autoscaling.json
+}
+
+data "aws_iam_policy_document" "worker_autoscaling" {
+  statement {
+    sid    = "eksWorkerAutoscalingAll"
+    effect = "Allow"
+
+    actions = [
+      "autoscaling:DescribeAutoScalingGroups",
+      "autoscaling:DescribeAutoScalingInstances",
+      "autoscaling:DescribeLaunchConfigurations",
+      "autoscaling:DescribeTags",
+      "ec2:DescribeLaunchTemplateVersions",
+    ]
+
+    resources = ["*"]
+  }
+
+  statement {
+    sid    = "eksWorkerAutoscalingOwn"
+    effect = "Allow"
+
+    actions = [
+      "autoscaling:SetDesiredCapacity",
+      "autoscaling:TerminateInstanceInAutoScalingGroup",
+      "autoscaling:UpdateAutoScalingGroup",
+    ]
+
+    resources = ["*"]
+
+    condition {
+      test     = "StringEquals"
+      variable = "autoscaling:ResourceTag/kubernetes.io/cluster/${module.eks.cluster_id}"
+      values   = ["owned"]
+    }
+
+    condition {
+      test     = "StringEquals"
+      variable = "autoscaling:ResourceTag/k8s.io/cluster-autoscaler/enabled"
+      values   = ["true"]
+    }
+  }
+}
+
+
+resource "helm_release" "autoscaler" {
+  repository = "https://kubernetes.github.io/autoscaler"
+  name       = "autoscaler"
+  chart      = "cluster-autoscaler"
+  version    = "9.9.2"
+  namespace  = "kube-system"
+  depends_on = [aws_iam_role_policy_attachment.workers_autoscaling]
+
+  set {
+    name  = "awsRegion"
+    value = var.aws_region
+  }
+  set {
+    name  = "autoDiscovery.clusterName"
+    value = var.cluster_name
+  }
+  set {
+    name = "rbac.create"
+    value = true
+  }
+  set {
+    name = "image.tag"
+    value = "v1.17.4"
+  }
 }

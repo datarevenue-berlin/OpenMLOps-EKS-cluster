@@ -1,5 +1,9 @@
 variable "cluster_name" {}
 
+variable "aws_region" {
+  default = ""
+}
+
 variable "map_users" {
   description = <<-EOF
     Additional IAM users to add to the aws-auth configmap.
