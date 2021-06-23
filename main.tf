@@ -1,5 +1,10 @@
 data "aws_availability_zones" "available" {}
 
+locals {
+  worker_groups_expanded = [ for wg in var.worker_groups:
+    merge(wg, {additional_security_group_ids = [aws_security_group.worker_group_mgmt_two.id]})
+  ]
+}
 
 module "vpc" {
   source = "terraform-aws-modules/vpc/aws"
@@ -29,11 +34,10 @@ module "vpc" {
 }
 
 
-
 module "eks" {
   source          = "terraform-aws-modules/eks/aws"
   cluster_name    = var.cluster_name
-  cluster_version = "1.17"
+  cluster_version = var.kubernetes_version
   subnets         = module.vpc.private_subnets
 
   tags = {
@@ -43,31 +47,8 @@ module "eks" {
   vpc_id    = module.vpc.vpc_id
   map_users = var.map_users
 
-  worker_groups = [
-    {
-      name                          = "worker-group-medium"
-      instance_type                 = "t3.medium"
-      additional_userdata           = ""
-      additional_security_group_ids = [aws_security_group.worker_group_mgmt_one.id]
-      root_volume_type              = "gp2"
+  worker_groups = local.worker_groups_expanded
 
-      #autoscaling group section
-      asg_max_size                  = "5"
-      asg_desired_capacity          = "1"
-    },
-    {
-      name                          = "worker-group-large"
-      instance_type                 = "t3.xlarge"
-      additional_userdata           = ""
-      additional_security_group_ids = [aws_security_group.worker_group_mgmt_two.id]
-      root_volume_type              = "gp2"
-
-      #autoscaling group section
-      asg_max_size         = "8"
-      asg_desired_capacity = "3"
-    },
-
-  ]
 }
 
 
