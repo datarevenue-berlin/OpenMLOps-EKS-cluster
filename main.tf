@@ -52,21 +52,9 @@ module "eks" {
       root_volume_type              = "gp2"
 
       #autoscaling group section
-      asg_max_size                  = "5"
+      asg_max_size                  = "3"
       asg_desired_capacity          = "1"
-    },
-    {
-      name                          = "worker-group-large"
-      instance_type                 = "t3.xlarge"
-      additional_userdata           = ""
-      additional_security_group_ids = [aws_security_group.worker_group_mgmt_two.id]
-      root_volume_type              = "gp2"
-
-      #autoscaling group section
-      asg_max_size         = "8"
-      asg_desired_capacity = "3"
-    },
-
+    }
   ]
 }
 
