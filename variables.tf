@@ -21,16 +21,17 @@ variable "map_users" {
 
 
 variable "eks_worker_groups" {
-  description = <<-EOF
-    Definition of AWS worker groups to be utilized.
+  description = "Definition of AWS worker groups to be utilized."
   type = list(object({
     name = string
     instance_type = string
     additional_userdata = string
-    additional_security_group_ids = list(string)
     root_volume_type              = string
     asg_max_size                  = string
     asg_desired_capacity          = string
 	}))
-  }
+ }
+
+variable "kubernetes_version" {
+  default = "1.19"
 }

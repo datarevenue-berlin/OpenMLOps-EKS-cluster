@@ -28,12 +28,17 @@ module "vpc" {
   }
 }
 
+locals {
+  worker_groups_expanded = [ for wg in var.eks_worker_groups:
+    merge(wg, {additional_security_group_ids = [aws_security_group.worker_group_mgmt_two.id]})
+  ]
+}
 
 
 module "eks" {
   source          = "terraform-aws-modules/eks/aws"
   cluster_name    = var.cluster_name
-  cluster_version = "1.17"
+  cluster_version = var.kubernetes_version
   subnets         = module.vpc.private_subnets
 
   tags = {
@@ -43,7 +48,7 @@ module "eks" {
   vpc_id    = module.vpc.vpc_id
   map_users = var.map_users
 
-  worker_groups = var.eks_worker_groups
+  worker_groups = local.worker_groups_expanded
 }
 
 
