@@ -6,9 +6,9 @@ module "vpc" {
   version              = "3.6.0"
   name                 = var.cluster_name
   cidr                 = "10.0.0.0/16"
-  azs                  = data.aws_availability_zones.available.names
-  private_subnets      = ["10.0.1.0/24", "10.0.2.0/24", "10.0.3.0/24"]
-  public_subnets       = ["10.0.4.0/24", "10.0.5.0/24", "10.0.6.0/24"]
+  azs                  = ["${var.aws_region}a", "${var.aws_region}b"]
+  private_subnets      = ["10.0.1.0/24", "10.0.2.0/24"]
+  public_subnets       = ["10.0.4.0/24", "10.0.5.0/24"]
   enable_nat_gateway   = true
   single_nat_gateway   = true
   enable_dns_hostnames = true
@@ -43,7 +43,9 @@ module "eks" {
   subnets         = module.vpc.private_subnets
 
   tags = {
-    Environment       = "development"
+    Environment                                     = "development"
+    "k8s.io/cluster-autoscaler/${var.cluster_name}" = "owned"
+    "k8s.io/cluster-autoscaler/enabled"             = "true"
   }
 
   vpc_id    = module.vpc.vpc_id
@@ -127,7 +129,7 @@ data "aws_iam_policy_document" "worker_autoscaling" {
 
     condition {
       test     = "StringEquals"
-      variable = "autoscaling:ResourceTag/kubernetes.io/cluster/${module.eks.cluster_id}"
+      variable = "autoscaling:ResourceTag/k8s.io/cluster-autoscaler/${module.eks.cluster_id}"
       values   = ["owned"]
     }
 
