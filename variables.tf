@@ -35,3 +35,9 @@ variable "eks_worker_groups" {
 variable "kubernetes_version" {
     type = string
 }
+
+variable "allow_cloudwatch" {
+  type = bool
+  default = false
+  description = "Whether to create the required policies to read/write CloudWatch Metrics"
+}

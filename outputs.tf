@@ -3,6 +3,11 @@ output "cluster_security_group_id" {
   value       = module.eks.cluster_security_group_id
 }
 
+output "worker_iam_role_name" {
+  description = "Worker IAM role name. Allow parent modules to attach other policies to the workers"
+  value = module.eks.worker_iam_role_name
+}
+
 output "cluster_name" {
   description = "Kubernetes Cluster Name"
   value       = var.cluster_name
