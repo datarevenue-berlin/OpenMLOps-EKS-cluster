@@ -2,6 +2,9 @@
 
 ## 0.2.0
 
+### Features
+- Add CloudWatch policy
+
 ### Bug fixes
 - Fix autoscaling not working
 
