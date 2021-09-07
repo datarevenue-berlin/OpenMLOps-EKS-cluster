@@ -5,6 +5,9 @@
 ### Features
 - Add CloudWatch policy
 
+### Bug fixes
+- Fix autoscaling not working
+
 ## 0.1.0
 
 ### Features
