@@ -19,25 +19,38 @@ variable "map_users" {
   default = []
 }
 
-
-variable "eks_worker_groups" {
-  description = "Definition of AWS worker groups to be utilized."
-  type = list(object({
-    name = string
-    instance_type = string
-    additional_userdata = string
-    root_volume_type              = string
-    asg_max_size                  = string
-    asg_desired_capacity          = string
-	}))
- }
-
 variable "kubernetes_version" {
   default = "1.19"
 }
 
 variable "eks_version" {
   default = "17.1.0"
+}
+
+
+variable "worker_groups" {
+  default = [
+    {
+      name                          = "worker-group-medium"
+      instance_type                 = "t3.medium"
+      additional_userdata           = ""
+      root_volume_type              = "gp2"
+
+      #autoscaling group section
+      asg_max_size                  = "5"
+      asg_desired_capacity          = "1"
+    },
+    {
+      name                          = "worker-group-large"
+      instance_type                 = "t3.xlarge"
+      additional_userdata           = ""
+      root_volume_type              = "gp2"
+
+      #autoscaling group section
+      asg_max_size         = "8"
+      asg_desired_capacity = "3"
+    },
+  ]
 }
 
 variable "allow_cloudwatch" {

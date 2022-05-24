@@ -1,14 +1,19 @@
 data "aws_availability_zones" "available" {}
 
+locals {
+  worker_groups_expanded = [ for wg in var.worker_groups:
+    merge(wg, {additional_security_group_ids = [aws_security_group.worker_group_mgmt_two.id]})
+  ]
+}
 
 module "vpc" {
   source = "terraform-aws-modules/vpc/aws"
-  version              = "3.6.0"
+
   name                 = var.cluster_name
   cidr                 = "10.0.0.0/16"
-  azs                  = ["${var.aws_region}a", "${var.aws_region}b"]
-  private_subnets      = ["10.0.1.0/24", "10.0.2.0/24"]
-  public_subnets       = ["10.0.4.0/24", "10.0.5.0/24"]
+  azs                  = data.aws_availability_zones.available.names
+  private_subnets      = ["10.0.1.0/24", "10.0.2.0/24", "10.0.3.0/24"]
+  public_subnets       = ["10.0.4.0/24", "10.0.5.0/24", "10.0.6.0/24"]
   enable_nat_gateway   = true
   single_nat_gateway   = true
   enable_dns_hostnames = true
@@ -28,12 +33,6 @@ module "vpc" {
   }
 }
 
-locals {
-  worker_groups_expanded = [ for wg in var.eks_worker_groups:
-    merge(wg, {additional_security_group_ids = [aws_security_group.worker_group_mgmt_two.id]})
-  ]
-}
-
 
 module "eks" {
   source          = "terraform-aws-modules/eks/aws"
@@ -43,15 +42,14 @@ module "eks" {
   subnets         = module.vpc.private_subnets
 
   tags = {
-    Environment                                     = "development"
-    "k8s.io/cluster-autoscaler/${var.cluster_name}" = "owned"
-    "k8s.io/cluster-autoscaler/enabled"             = "true"
+    Environment       = "development"
   }
 
   vpc_id    = module.vpc.vpc_id
   map_users = var.map_users
 
   worker_groups = local.worker_groups_expanded
+
 }
 
 
@@ -135,7 +133,7 @@ data "aws_iam_policy_document" "worker_autoscaling" {
 
     condition {
       test     = "StringEquals"
-      variable = "autoscaling:ResourceTag/k8s.io/cluster-autoscaler/${module.eks.cluster_id}"
+      variable = "autoscaling:ResourceTag/kubernetes.io/cluster/${module.eks.cluster_id}"
       values   = ["owned"]
     }
 
