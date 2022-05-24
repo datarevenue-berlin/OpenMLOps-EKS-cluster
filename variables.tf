@@ -23,7 +23,7 @@ variable "kubernetes_version" {
   default = "1.19"
 }
 
-variable "eks_version" {
+variable "terraform_eks_version" {
   default = "17.1.0"
 }
 

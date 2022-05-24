@@ -36,7 +36,7 @@ module "vpc" {
 
 module "eks" {
   source          = "terraform-aws-modules/eks/aws"
-  version         = var.eks_version
+  version         = var.terraform_eks_version
   cluster_name    = var.cluster_name
   cluster_version = var.kubernetes_version
   subnets         = module.vpc.private_subnets
