@@ -23,6 +23,7 @@ variable "kubernetes_version" {
   default = "1.19"
 }
 
+
 variable "worker_groups" {
   default = [
     {
