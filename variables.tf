@@ -23,10 +23,6 @@ variable "kubernetes_version" {
   default = "1.19"
 }
 
-variable "terraform_eks_version" {
-  default = "17.1.0"
-}
-
 
 variable "worker_groups" {
   default = [
