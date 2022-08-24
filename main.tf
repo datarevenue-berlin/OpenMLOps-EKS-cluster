@@ -171,6 +171,6 @@ resource "helm_release" "autoscaler" {
   }
   set {
     name = "image.tag"
-    value = "v1.17.4"
+    value = "v1.20.3"
   }
 }
