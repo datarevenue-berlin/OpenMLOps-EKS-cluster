@@ -25,3 +25,7 @@ output "cluster_auth_token" {
   value = data.aws_eks_cluster_auth.cluster.token
   sensitive = true
 }
+
+output "cluster_version" {
+  value = var.kubernetes_version
+}
