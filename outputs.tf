@@ -27,5 +27,5 @@ output "cluster_auth_token" {
 }
 
 output "cluster_version" {
-  value = var.kubernetes_version
+  value = module.eks.cluster_version
 }
