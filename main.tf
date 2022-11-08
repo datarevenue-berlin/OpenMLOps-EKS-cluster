@@ -80,6 +80,11 @@ resource "aws_iam_role_policy_attachment" "ec2_container_reg_full_access" {
   role       = module.eks.worker_iam_role_name
 }
 
+resource "aws_iam_role_policy_attachment" "ebs_csi_driver" {
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonEBSCSIDriverPolicy"
+  role       = module.eks.worker_iam_role_name
+}
+
 resource "aws_iam_role_policy_attachment" "cloud_watch_agent_server" {
   count =  var.allow_cloudwatch ? 1 : 0
   policy_arn = "arn:aws:iam::aws:policy/CloudWatchAgentServerPolicy"
