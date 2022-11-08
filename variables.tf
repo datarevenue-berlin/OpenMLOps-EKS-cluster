@@ -23,6 +23,14 @@ variable "kubernetes_version" {
   default = "1.19"
 }
 
+variable "autoscaler_chart_version" {
+  default = "9.9.2"
+}
+
+variable "autoscaler_version" {
+  default = "1.20.3"
+}
+
 variable "worker_groups" {
   default = [
     {
