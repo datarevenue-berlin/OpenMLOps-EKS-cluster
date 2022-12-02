@@ -26,6 +26,7 @@ module "vpc" {
     "kubernetes.io/cluster/${var.cluster_name}" = "shared"
     "kubernetes.io/role/internal-elb"           = "1"
   }
+
 }
 
 locals {
@@ -50,7 +51,7 @@ module "eks" {
 
   vpc_id    = module.vpc.vpc_id
   map_users = var.map_users
-
+  map_roles = var.map_roles
   worker_groups = local.worker_groups_expanded
 }
 
