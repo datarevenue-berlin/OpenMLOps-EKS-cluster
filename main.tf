@@ -153,7 +153,7 @@ resource "helm_release" "autoscaler" {
   repository = "https://kubernetes.github.io/autoscaler"
   name       = "autoscaler"
   chart      = "cluster-autoscaler"
-  version    = "9.9.2"
+  version    = var.autoscaler_chart_version
   namespace  = "kube-system"
   depends_on = [aws_iam_role_policy_attachment.workers_autoscaling]
 
@@ -171,6 +171,6 @@ resource "helm_release" "autoscaler" {
   }
   set {
     name = "image.tag"
-    value = "v1.20.3"
+    value = var.autoscaler_version
   }
 }
