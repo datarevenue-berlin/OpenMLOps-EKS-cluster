@@ -46,7 +46,7 @@ module "eks" {
 
   vpc_id    = module.vpc.vpc_id
   map_users = var.map_users
-
+  map_roles = var.map_roles
   worker_groups = local.worker_groups_expanded
 
 }

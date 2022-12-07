@@ -31,6 +31,21 @@ variable "autoscaler_version" {
   default = "1.20.3"
 }
 
+variable "map_roles" {
+  description = <<-EOF
+    Additional IAM roles to add to the aws-auth configmap.
+    By default only the IAM user who created the cluster has permissions to access Kubernetes API (i.e. use kubectl).
+    Add here other roles who also should be allowed to do it.
+  EOF
+  type = list(object({
+    userarn  = string
+    username = string
+    groups   = list(string)
+  }))
+
+  default = []
+}
+
 variable "worker_groups" {
   default = [
     {
