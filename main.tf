@@ -26,6 +26,7 @@ module "vpc" {
     "kubernetes.io/cluster/${var.cluster_name}" = "shared"
     "kubernetes.io/role/internal-elb"           = "1"
   }
+
 }
 
 locals {
@@ -50,7 +51,7 @@ module "eks" {
 
   vpc_id    = module.vpc.vpc_id
   map_users = var.map_users
-
+  map_roles = var.map_roles
   worker_groups = local.worker_groups_expanded
 }
 
@@ -152,7 +153,7 @@ resource "helm_release" "autoscaler" {
   repository = "https://kubernetes.github.io/autoscaler"
   name       = "autoscaler"
   chart      = "cluster-autoscaler"
-  version    = "9.9.2"
+  version    = var.autoscaler_chart_version
   namespace  = "kube-system"
   depends_on = [aws_iam_role_policy_attachment.workers_autoscaling]
 
@@ -170,6 +171,6 @@ resource "helm_release" "autoscaler" {
   }
   set {
     name = "image.tag"
-    value = "v1.17.4"
+    value = var.autoscaler_version
   }
 }
