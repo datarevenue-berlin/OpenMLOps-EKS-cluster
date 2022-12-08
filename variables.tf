@@ -38,7 +38,7 @@ variable "map_roles" {
     Add here other roles who also should be allowed to do it.
   EOF
   type = list(object({
-    userarn  = string
+    rolearn  = string
     username = string
     groups   = list(string)
   }))
