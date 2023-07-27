@@ -76,3 +76,8 @@ variable "allow_cloudwatch" {
   default = false
   description = "Whether to create the required policies to read/write CloudWatch Metrics"
 }
+
+variable "enable_irsa" {
+  default = true
+  description = "Whether to enable IAM Roles for Service Accounts (IRSA) on the EKS cluster. Required for AWS Load Balancer Controller add-on"
+}

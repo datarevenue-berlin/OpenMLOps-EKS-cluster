@@ -49,7 +49,7 @@ module "eks" {
   map_roles = var.map_roles
   worker_groups = local.worker_groups_expanded
 
-  enable_irsa = true
+  enable_irsa = var.enable_irsa
 }
 
 
