@@ -46,9 +46,10 @@ module "eks" {
 
   vpc_id    = module.vpc.vpc_id
   map_users = var.map_users
-
+  map_roles = var.map_roles
   worker_groups = local.worker_groups_expanded
 
+  enable_irsa = true
 }
 
 
@@ -59,7 +60,6 @@ data "aws_eks_cluster" "cluster" {
 data "aws_eks_cluster_auth" "cluster" {
   name = module.eks.cluster_id
 }
-
 
 data "http" "worker_policy" {
   url = "https://raw.githubusercontent.com/kubernetes-sigs/aws-alb-ingress-controller/v1.1.9/docs/examples/iam-policy.json"
