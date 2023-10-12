@@ -8,7 +8,7 @@ locals {
 
 module "vpc" {
   source = "terraform-aws-modules/vpc/aws"
-
+  version              = "3.6.0"
   name                 = var.cluster_name
   cidr                 = "10.0.0.0/16"
   azs                  = data.aws_availability_zones.available.names
@@ -36,6 +36,7 @@ module "vpc" {
 
 module "eks" {
   source          = "terraform-aws-modules/eks/aws"
+  version         = "17.1.0"
   cluster_name    = var.cluster_name
   cluster_version = var.kubernetes_version
   subnets         = module.vpc.private_subnets
@@ -49,7 +50,7 @@ module "eks" {
   map_roles = var.map_roles
   worker_groups = local.worker_groups_expanded
 
-  enable_irsa = true
+  enable_irsa = var.enable_irsa
 }
 
 
